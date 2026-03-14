@@ -43,7 +43,7 @@ async function fetchRssFeed(source: { name: string; url: string }): Promise<News
                            item.match(/<published>(.*?)<\/published>/);
 
       if (titleMatch && linkMatch) {
-        const title = titleMatch[1].replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+        const title = titleMatch[1].replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
         const url = linkMatch[1].trim();
 
         articles.push({
@@ -100,25 +100,30 @@ export async function checkVtuberNews(client: Client, db: Pool): Promise<void> {
     // Get optional AI summary
     const summary = await summarizeNews(newArticles.slice(0, 5));
 
-    // Get all servers subscribed to vtuber news
+    // Get all servers subscribed to vtuber news with their tracked vtubers in one query
     const { rows: subscribers } = await db.query(
       `SELECT DISTINCT guild_id, channel_id FROM server_subscriptions
        WHERE subscription_type = 'vtuber'`
     );
+
+    const { rows: allTrackedVtubers } = await db.query(
+      `SELECT guild_id, target FROM server_subscriptions WHERE subscription_type = 'vtuber'`
+    );
+
+    // Build a map of guild_id -> tracked vtuber names for fast lookup
+    const vtubersByGuild = new Map<string, string[]>();
+    for (const row of allTrackedVtubers) {
+      const list = vtubersByGuild.get(row.guild_id) ?? [];
+      list.push(row.target.toLowerCase());
+      vtubersByGuild.set(row.guild_id, list);
+    }
 
     for (const sub of subscribers) {
       try {
         const channel = await client.channels.fetch(sub.channel_id) as TextChannel;
         if (!channel) continue;
 
-        // Get the vtubers this server tracks
-        const { rows: trackedVtubers } = await db.query(
-          `SELECT target FROM server_subscriptions
-           WHERE guild_id = $1 AND subscription_type = 'vtuber'`,
-          [sub.guild_id]
-        );
-
-        const trackedNames = trackedVtubers.map((v: { target: string }) => v.target.toLowerCase());
+        const trackedNames = vtubersByGuild.get(sub.guild_id) ?? [];
 
         // Filter articles relevant to tracked vtubers (or send all if tracking broadly)
         const relevantArticles = newArticles.filter(a => {

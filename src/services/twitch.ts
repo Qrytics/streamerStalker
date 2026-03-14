@@ -3,6 +3,8 @@ import axios from 'axios';
 let accessToken: string | null = null;
 let tokenExpiry: number = 0;
 
+const TOKEN_REFRESH_BUFFER_MS = 60_000;
+
 async function getAccessToken(): Promise<string> {
   if (accessToken && Date.now() < tokenExpiry) {
     return accessToken;
@@ -17,7 +19,7 @@ async function getAccessToken(): Promise<string> {
   });
 
   accessToken = response.data.access_token;
-  tokenExpiry = Date.now() + response.data.expires_in * 1000 - 60000;
+  tokenExpiry = Date.now() + response.data.expires_in * 1000 - TOKEN_REFRESH_BUFFER_MS;
   return accessToken!;
 }
 

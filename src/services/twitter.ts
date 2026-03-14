@@ -48,12 +48,15 @@ function parseRssFeed(xml: string, username: string): Tweet[] {
     if (titleMatch && linkMatch) {
       const link = linkMatch[1];
       const tweetIdMatch = link.match(/\/status\/(\d+)/);
-      const tweetId = tweetIdMatch ? tweetIdMatch[1] : guidMatch?.[1] || link;
+      // Fall back to guid or link, but always extract only the numeric ID segment
+      const rawId = tweetIdMatch ? tweetIdMatch[1] : (guidMatch?.[1] || link);
+      const numericIdMatch = rawId.match(/(\d+)$/);
+      const tweetId = numericIdMatch ? numericIdMatch[1] : rawId;
 
       tweets.push({
         id: tweetId,
-        text: titleMatch[1].replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>'),
-        url: `https://twitter.com/${username}/status/${tweetId.split('/').pop()}`,
+        text: titleMatch[1].replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&'),
+        url: `https://twitter.com/${username}/status/${tweetId}`,
         author: username,
         publishedAt: pubDateMatch ? new Date(pubDateMatch[1]) : new Date(),
       });
