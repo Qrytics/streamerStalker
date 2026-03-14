@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { decodeHtmlEntities } from '../utils/html';
 
 export interface Tweet {
   id: string;
@@ -55,7 +56,7 @@ function parseRssFeed(xml: string, username: string): Tweet[] {
 
       tweets.push({
         id: tweetId,
-        text: titleMatch[1].replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&'),
+        text: decodeHtmlEntities(titleMatch[1]),
         url: `https://twitter.com/${username}/status/${tweetId}`,
         author: username,
         publishedAt: pubDateMatch ? new Date(pubDateMatch[1]) : new Date(),

@@ -2,6 +2,7 @@ import axios from 'axios';
 import { Client, EmbedBuilder, TextChannel } from 'discord.js';
 import { Pool } from 'pg';
 import { summarizeNews } from '../services/aiSummary';
+import { decodeHtmlEntities } from '../utils/html';
 
 interface NewsArticle {
   title: string;
@@ -43,7 +44,7 @@ async function fetchRssFeed(source: { name: string; url: string }): Promise<News
                            item.match(/<published>(.*?)<\/published>/);
 
       if (titleMatch && linkMatch) {
-        const title = titleMatch[1].replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+        const title = decodeHtmlEntities(titleMatch[1]);
         const url = linkMatch[1].trim();
 
         articles.push({

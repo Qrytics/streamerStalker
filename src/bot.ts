@@ -1,4 +1,4 @@
-import { Client, GatewayIntentBits, Collection, REST, Routes } from 'discord.js';
+import { Client, GatewayIntentBits, Collection, REST, Routes, ChatInputCommandInteraction } from 'discord.js';
 import { config } from 'dotenv';
 import { Pool } from 'pg';
 import { startJobs } from './scheduler/jobs';
@@ -7,6 +7,11 @@ import untrackCommand from './commands/untrack';
 import listCommand from './commands/list';
 
 config();
+
+interface Command {
+  data: { name: string; toJSON(): object };
+  execute: (interaction: ChatInputCommandInteraction, db: Pool) => Promise<void>;
+}
 
 const client = new Client({
   intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
@@ -20,7 +25,7 @@ export const db = new Pool({
   database: process.env.POSTGRES_DB || 'streamerstalker',
 });
 
-const commands = new Collection<string, any>();
+const commands = new Collection<string, Command>();
 commands.set(trackCommand.data.name, trackCommand);
 commands.set(untrackCommand.data.name, untrackCommand);
 commands.set(listCommand.data.name, listCommand);
