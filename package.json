@@ -1,0 +1,27 @@
+{
+  "name": "streamer-stalker-bot",
+  "version": "1.0.0",
+  "description": "A Discord bot that tracks streamers, tweets, and vtuber news",
+  "main": "dist/bot.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/bot.js",
+    "dev": "ts-node src/bot.ts",
+    "lint": "eslint src --ext .ts"
+  },
+  "dependencies": {
+    "discord.js": "^14.0.0",
+    "pg": "^8.11.0",
+    "node-cron": "^3.0.0",
+    "axios": "^1.6.0",
+    "openai": "^4.0.0",
+    "dotenv": "^16.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/pg": "^8.10.0",
+    "@types/node-cron": "^3.0.0",
+    "typescript": "^5.0.0",
+    "ts-node": "^10.9.0"
+  }
+}
