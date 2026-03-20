@@ -54,7 +54,7 @@ export interface StreamInfo {
  * callers can detect the offline → live transition without a separate lookup.
  *
  * @param usernames - Lowercase Twitch login names to check.
- * @returns A Map from lowercase username → {@link StreamInfo}.
+ * @returns A Map from lowercase username to {@link StreamInfo}.
  */
 export async function getStreamStatus(usernames: string[]): Promise<Map<string, StreamInfo>> {
   if (usernames.length === 0) return new Map();

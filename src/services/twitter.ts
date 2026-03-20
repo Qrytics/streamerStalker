@@ -20,7 +20,7 @@ const NITTER_INSTANCES = [
  * Fetches the most recent tweets for a Twitter/X username by polling public
  * Nitter RSS feeds (no official API key required).
  *
- * Attempts each instance in {@link NITTER_INSTANCES} in order and returns the
+ * Attempts each instance in `NITTER_INSTANCES` in order and returns the
  * first successful response.  Returns an empty array if all instances fail.
  *
  * @param username - Twitter/X screen name (without the leading `@`).
