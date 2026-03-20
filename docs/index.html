@@ -1,224 +1,625 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>streamerStalker — Never Miss a Stream Again</title>
-  <link rel="stylesheet" href="styles.css" />
-</head>
-<body>
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="streamerStalker aggregates Twitch, Twitter/X, and VTuber news into high-signal Discord alerts."
+    />
+    <meta name="theme-color" content="#0e0e0e" />
+    <meta name="color-scheme" content="dark" />
 
-  <!-- ── Hero ──────────────────────────────────────────────────────── -->
-  <header class="hero">
-    <div class="hero-inner">
-      <div class="hero-badge">Discord Bot</div>
-      <h1>streamer<span class="accent">Stalker</span></h1>
-      <p class="hero-tagline">All your favourite streamers, one ping away.</p>
-      <p class="hero-sub">
-        Track Twitch streams, Twitter&nbsp;/&nbsp;X posts, and vtuber news —
-        all from inside your Discord server.
-      </p>
-      <div class="hero-cta">
-        <a class="btn btn-primary" href="https://github.com/Qrytics/streamerStalker" target="_blank" rel="noopener">
-          View on GitHub
+    <title>streamerStalker — Never Miss a Stream Again</title>
+
+    <meta property="og:title" content="streamerStalker — Never Miss a Stream Again" />
+    <meta
+      property="og:description"
+      content="Twitch live alerts, Twitter/X updates, and VTuber news digests inside Discord."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="streamerStalker" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "error-container": "#a70138",
+              "on-primary-fixed-variant": "#3c0080",
+              "tertiary-fixed-dim": "#00e5ee",
+              "on-error-container": "#ffb2b9",
+              outline: "#777575",
+              "secondary-fixed-dim": "#babfff",
+              "on-surface": "#ffffff",
+              "surface-variant": "#262626",
+              "surface-container": "#1a1919",
+              "inverse-primary": "#7a27e8",
+              primary: "#c19cff",
+              surface: "#0e0e0e",
+              "on-tertiary-container": "#00575b",
+              "tertiary-container": "#00f4fe",
+              "on-primary-container": "#300069",
+              "surface-dim": "#0e0e0e",
+              "surface-container-low": "#131313",
+              error: "#ff6e84",
+              "surface-tint": "#c19cff",
+              "error-dim": "#d73357",
+              "on-error": "#490013",
+              "outline-variant": "#494847",
+              "on-tertiary": "#006165",
+              "inverse-surface": "#fcf8f8",
+              "primary-fixed-dim": "#ab78ff",
+              "inverse-on-surface": "#565554",
+              "on-secondary-fixed-variant": "#2f3bcc",
+              background: "#0e0e0e",
+              "surface-container-high": "#201f1f",
+              "surface-container-lowest": "#000000",
+              "tertiary-fixed": "#00f4fe",
+              "on-primary-fixed": "#000000",
+              "surface-container-highest": "#262626",
+              "on-surface-variant": "#adaaaa",
+              "secondary-fixed": "#cbceff",
+              "on-tertiary-fixed": "#004346",
+              "secondary-dim": "#5764f1",
+              "primary-container": "#b68aff",
+              "on-secondary-container": "#cacdff",
+              "on-tertiary-fixed-variant": "#006266",
+              secondary: "#8b95ff",
+              "on-primary": "#3f0085",
+              "on-background": "#ffffff",
+              "secondary-container": "#222fc2",
+              "primary-fixed": "#b68aff",
+              "on-secondary-fixed": "#000fb0",
+              "on-secondary": "#000776",
+              "tertiary-dim": "#00e5ee",
+              "surface-bright": "#2c2c2c",
+              "primary-dim": "#9146ff",
+              tertiary: "#a1faff"
+            },
+            fontFamily: {
+              headline: ["Space Grotesk"],
+              body: ["Inter"],
+              label: ["Inter"]
+            },
+            borderRadius: { DEFAULT: "0.125rem", lg: "0.25rem", xl: "0.5rem", full: "0.75rem" }
+          }
+        }
+      };
+    </script>
+
+    <style>
+      :focus-visible {
+        outline: 2px solid rgba(193, 156, 255, 0.75);
+        outline-offset: 3px;
+      }
+
+      .skip-link {
+        position: absolute;
+        left: 0;
+        top: -1000px;
+        background: #131313;
+        border: 1px solid rgba(193, 156, 255, 0.35);
+        color: #ffffff;
+        padding: 10px 14px;
+        border-radius: 10px;
+        z-index: 1000;
+      }
+      .skip-link:focus {
+        top: 12px;
+        left: 12px;
+      }
+
+      .material-symbols-outlined {
+        font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+      }
+
+      .neon-border {
+        border: 1px solid rgba(193, 156, 255, 0.15);
+      }
+
+      .glass-card {
+        background: rgba(26, 25, 25, 0.6);
+        backdrop-filter: blur(20px);
+      }
+
+      .gradient-text {
+        background: linear-gradient(45deg, #c19cff, #8b95ff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          animation-duration: 0.001ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.001ms !important;
+          scroll-behavior: auto !important;
+        }
+      }
+    </style>
+  </head>
+
+  <body
+    class="bg-background text-on-surface font-body selection:bg-primary/30 selection:text-primary"
+  >
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <nav
+      class="fixed top-0 w-full z-50 flex justify-between items-center px-6 py-4 max-w-7xl mx-auto left-1/2 -translate-x-1/2 bg-[#131313]/80 backdrop-blur-md"
+      aria-label="Top navigation"
+    >
+      <a
+        class="text-2xl font-bold tracking-tighter text-[#c19cff] font-['Space_Grotesk']"
+        href="#top"
+      >
+        streamerStalker
+      </a>
+
+      <div class="hidden md:flex items-center gap-8 font-['Inter'] text-sm font-medium">
+        <a
+          class="text-[#c19cff] border-b-2 border-[#c19cff] pb-1 hover:text-white transition-colors duration-200"
+          href="#features"
+        >
+          Features
         </a>
-        <a class="btn btn-secondary" href="https://github.com/Qrytics/streamerStalker#getting-started" target="_blank" rel="noopener">
-          Get Started
+        <a class="text-[#adaaaa] hover:text-white transition-colors duration-200" href="#pricing">
+          Pricing
         </a>
       </div>
-    </div>
-  </header>
 
-  <!-- ── Features ──────────────────────────────────────────────────── -->
-  <section class="features" id="features">
-    <div class="container">
-      <h2 class="section-title">Features</h2>
-      <div class="feature-grid">
+      <a
+        class="bg-gradient-to-r from-primary to-primary-dim text-on-primary-fixed px-5 py-2.5 rounded-lg font-headline font-bold text-sm scale-95 active:scale-90 transition-transform shadow-[0_0_15px_rgba(193,156,255,0.2)]"
+        href="https://github.com/Qrytics/streamerStalker#getting-started"
+        target="_blank"
+        rel="noopener"
+        aria-label="Get started (opens GitHub)"
+      >
+        Add to Discord
+      </a>
+    </nav>
 
-        <div class="feature-card">
-          <div class="feature-icon">🔴</div>
-          <h3>Twitch Live Alerts</h3>
-          <p>
-            Polls the Twitch Helix API every&nbsp;60&nbsp;seconds and sends a
-            rich embed the moment a streamer goes live — with title, game,
-            viewer count, and stream thumbnail.
+    <main id="main" class="pt-24">
+      <section
+        id="top"
+        class="relative min-h-[780px] flex flex-col items-center justify-center text-center px-6 overflow-hidden"
+        aria-label="Hero"
+      >
+        <!-- Background Elements (decorative) -->
+        <div
+          aria-hidden="true"
+          class="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-primary/10 blur-[120px] rounded-full -z-10"
+        ></div>
+        <div
+          aria-hidden="true"
+          class="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-secondary/5 blur-[100px] rounded-full -z-10"
+        ></div>
+
+        <div class="max-w-4xl mx-auto space-y-8">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container-high border border-outline-variant/20 text-xs font-label uppercase tracking-[0.2em] text-primary">
+            <span class="w-2 h-2 rounded-full bg-error animate-pulse" aria-hidden="true"></span>
+            Live Intelligence Feed
+          </div>
+
+          <h1 class="font-headline text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-tight leading-[1.1] text-white">
+            The Ultimate <span class="gradient-text">Discord Bot</span> for Your Streamer Intel
+          </h1>
+
+          <p class="text-on-surface-variant text-lg md:text-xl max-w-2xl mx-auto font-body leading-relaxed">
+            Aggregate real-time data from Twitch, Twitter/X, and VTuber networks directly into your Discord server.
+            Precision tracking for the elite creator community.
+          </p>
+
+          <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6">
+            <a
+              class="w-full sm:w-auto px-8 py-4 glass-card neon-border rounded-xl font-headline font-bold text-lg text-primary flex items-center justify-center gap-3 hover:bg-primary/10 transition-all duration-300 scale-95 active:scale-90"
+              href="https://github.com/Qrytics/streamerStalker#getting-started"
+              target="_blank"
+              rel="noopener"
+            >
+              <span class="material-symbols-outlined" data-icon="add_box" aria-hidden="true">add_box</span>
+              Add to Discord
+            </a>
+            <a
+              class="w-full sm:w-auto px-8 py-4 rounded-xl font-headline font-bold text-lg text-on-surface-variant hover:text-white transition-all"
+              href="#preview"
+            >
+              View Demo
+            </a>
+          </div>
+        </div>
+
+        <!-- Dashboard Preview Overlap -->
+        <div class="mt-20 w-full max-w-6xl mx-auto rounded-t-2xl border-x border-t border-outline-variant/15 bg-surface-container-low p-4 shadow-2xl">
+          <figure>
+            <img
+              alt="Preview of the streamerStalker dashboard interface"
+              class="w-full rounded-t-xl opacity-80 grayscale-[0.2] hover:grayscale-0 transition-all duration-700"
+              data-alt="Futuristic dark mode dashboard interface with purple neon accents"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuDY7kqQrCaUoyOQIAcVro9xp_qMam6ZJyQFkO-5qZ2_xtxfBRo63_JxZWLy2L9ddlOjrj8RmdivH51dajeUKgGzsY99ul5jWXjSBVS0DLvtHjqjAT8zl0anOgBFvvw6SRMfzP7KkCEmdPfkRiWcGHGJAPvH5SKPYq60r9dgEgqkvGIuDpQ1Rn-fooiXICZW7u-vjb9t-KYSvY2-wAKcEoXQ_QjtoTGCGh_1XSoEGk2qTRjoxGwfCd5VhBCVFRxz0HH281yROLEt2y01"
+              loading="lazy"
+              decoding="async"
+              width="1400"
+              height="720"
+            />
+            <figcaption class="sr-only">
+              Visual preview of how alerts and trackers can look in a dashboard UI.
+            </figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <!-- Feature Grid (Bento Style) -->
+      <section id="features" class="py-32 px-6 max-w-7xl mx-auto" aria-label="Features">
+        <div class="mb-16 space-y-4">
+          <h2 class="font-headline text-3xl md:text-5xl font-bold text-white">
+            Advanced <span class="text-primary">Capabilities</span>
+          </h2>
+          <p class="text-on-surface-variant max-w-xl">
+            Modular trackers designed for the modern streaming ecosystem.
           </p>
         </div>
 
-        <div class="feature-card">
-          <div class="feature-icon">🐦</div>
-          <h3>Twitter&nbsp;/&nbsp;X Updates</h3>
-          <p>
-            Fetches new tweets via Nitter RSS every&nbsp;3&nbsp;minutes —
-            no official Twitter API key required. Falls back through multiple
-            Nitter instances automatically.
+        <div class="grid grid-cols-1 md:grid-cols-4 md:grid-rows-2 gap-4 h-full md:h-[600px]">
+          <!-- Twitch Alerts (Large) -->
+          <div class="md:col-span-2 md:row-span-2 bg-surface-container-low rounded-xl p-8 neon-border flex flex-col justify-between group hover:bg-surface-container-high transition-all">
+            <div class="space-y-4">
+              <div class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+                <span class="material-symbols-outlined text-3xl" data-icon="radio" aria-hidden="true">radio</span>
+              </div>
+              <h3 class="font-headline text-2xl font-bold text-white">Twitch Alerts</h3>
+              <p class="text-on-surface-variant">
+                Real-time go-live notifications with custom embeds, viewer count tracking, and stream category detection.
+              </p>
+            </div>
+            <div class="mt-8 overflow-hidden rounded-lg">
+              <img
+                alt="Neon-themed illustration representing Twitch trackers"
+                class="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-500"
+                loading="lazy"
+                decoding="async"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBEONHAKwb66ehZADu1Yhxj5FTmckGw9c1a49j_DY7HCR9osEU7hkhiRW6EMRCMTXt3kRWpCXT5-ItLwTTZrufKNlzGj4BLPjIGqw_6rozoGK97j_UirAdsYlhmq0_w49lS4s3DhB0_CvvcOz_TDEpxEwgcnWic7f2Fb0yo7aXRp3P0hdpTcW-0fdQq2Fdj9d2Yjeisnp8NrfTtM4CfMRz4RfeDBrbAYJXKfS3MIszyOCeBIaD02k1S9Ck40jR5w7tTtric61A1bvJ2"
+                width="1200"
+                height="400"
+              />
+            </div>
+          </div>
+
+          <!-- Twitter Updates -->
+          <div class="md:col-span-2 bg-surface-container-low rounded-xl p-8 border border-outline-variant/10 flex flex-col justify-between hover:bg-surface-container-high transition-all">
+            <div class="flex justify-between items-start">
+              <div class="space-y-4">
+                <h3 class="font-headline text-xl font-bold text-white">Twitter/X Intelligence</h3>
+                <p class="text-sm text-on-surface-variant">
+                  Track tweets, replies, and media from targeted creator accounts without leaving Discord.
+                </p>
+              </div>
+              <div class="text-secondary" aria-hidden="true">
+                <span class="material-symbols-outlined text-3xl" data-icon="campaign">campaign</span>
+              </div>
+            </div>
+            <div class="mt-8 h-40 rounded-lg bg-gradient-to-br from-primary/10 to-secondary/10" aria-hidden="true"></div>
+          </div>
+
+          <!-- VTuber News -->
+          <div class="md:col-span-1 bg-surface-container-low rounded-xl p-6 border border-outline-variant/10 flex flex-col gap-4 hover:bg-surface-container-high transition-all">
+            <div class="text-tertiary" aria-hidden="true">
+              <span class="material-symbols-outlined text-3xl" data-icon="newspaper">newspaper</span>
+            </div>
+            <h3 class="font-headline font-bold text-white">VTuber News</h3>
+            <p class="text-xs text-on-surface-variant">
+              Curated feed from major agencies and independent talents across the globe.
+            </p>
+          </div>
+
+          <!-- AI Summaries -->
+          <div class="md:col-span-1 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-xl p-6 border border-primary/20 flex flex-col gap-4 hover:brightness-125 transition-all">
+            <div class="text-white" aria-hidden="true">
+              <span class="material-symbols-outlined text-3xl" data-icon="smart_toy">smart_toy</span>
+            </div>
+            <h3 class="font-headline font-bold text-white">AI Summaries</h3>
+            <p class="text-xs text-white/70">GPT-powered TL;DR for long streams and thread conversations.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- How it Works Stepper -->
+      <section id="how-it-works" class="py-32 bg-surface-container-low/50" aria-label="How it works">
+        <div class="max-w-7xl mx-auto px-6">
+          <div class="text-center mb-20">
+            <h2 class="font-headline text-4xl font-bold text-white">Operational Protocol</h2>
+            <p class="text-on-surface-variant mt-4">Three steps to total server situational awareness.</p>
+          </div>
+
+          <div class="relative grid grid-cols-1 md:grid-cols-3 gap-12">
+            <!-- Connector Line -->
+            <div class="hidden md:block absolute top-12 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-outline-variant/30 to-transparent -z-10" aria-hidden="true"></div>
+
+            <ol class="contents">
+              <li class="flex flex-col items-center text-center space-y-6">
+                <div class="w-16 h-16 rounded-full bg-surface-container-highest flex items-center justify-center font-headline font-bold text-2xl text-primary border-2 border-primary/30 shadow-[0_0_20px_rgba(193,156,255,0.1)]">
+                  1
+                </div>
+                <div class="space-y-2">
+                  <h4 class="font-headline font-bold text-xl text-white">Add Bot</h4>
+                  <p class="text-on-surface-variant text-sm px-4">
+                    Authorize streamerStalker to your Discord server via the official OAuth portal.
+                  </p>
+                </div>
+              </li>
+
+              <li class="flex flex-col items-center text-center space-y-6">
+                <div class="w-16 h-16 rounded-full bg-surface-container-highest flex items-center justify-center font-headline font-bold text-2xl text-primary border-2 border-primary/30 shadow-[0_0_20px_rgba(193,156,255,0.1)]">
+                  2
+                </div>
+                <div class="space-y-2">
+                  <h4 class="font-headline font-bold text-xl text-white">Choose Channels</h4>
+                  <p class="text-on-surface-variant text-sm px-4">
+                    Select target streamers and assign specific Discord channels for each data feed.
+                  </p>
+                </div>
+              </li>
+
+              <li class="flex flex-col items-center text-center space-y-6">
+                <div class="w-16 h-16 rounded-full bg-primary flex items-center justify-center font-headline font-bold text-2xl text-on-primary shadow-[0_0_30px_rgba(193,156,255,0.4)]">
+                  3
+                </div>
+                <div class="space-y-2">
+                  <h4 class="font-headline font-bold text-xl text-white">Get Alerts</h4>
+                  <p class="text-on-surface-variant text-sm px-4">
+                    Receive lightning-fast intelligence updates directly in your server&apos;s feed.
+                  </p>
+                </div>
+              </li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <!-- Demo Preview -->
+      <section id="preview" class="py-20 px-6 max-w-7xl mx-auto" aria-label="Demo preview">
+        <div class="flex flex-col gap-3 mb-10">
+          <h2 class="font-headline text-4xl font-bold text-white">Live UI Preview</h2>
+          <p class="text-on-surface-variant max-w-2xl">
+            Eye candy, but built to hint at where the project can go: trackers, notifications, and AI insights in one place.
           </p>
         </div>
 
-        <div class="feature-card">
-          <div class="feature-icon">📰</div>
-          <h3>Vtuber News Digest</h3>
-          <p>
-            Aggregates posts from r/VirtualYoutubers and r/Hololive every
-            30&nbsp;minutes, filters by the vtubers you care about, and
-            optionally generates an AI&nbsp;summary.
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div class="bg-surface-container-low rounded-xl border border-outline-variant/10 overflow-hidden">
+            <div class="p-6">
+              <div class="flex items-center justify-between mb-4">
+                <div class="text-white">
+                  <span class="material-symbols-outlined text-primary" aria-hidden="true">dashboard</span>
+                </div>
+                <span class="text-[10px] uppercase tracking-[0.2em] font-bold text-on-surface-variant">Server Overview</span>
+              </div>
+              <p class="text-on-surface-variant text-sm">
+                Status, counts, and the systems that are currently running.
+              </p>
+            </div>
+            <div class="h-40 bg-gradient-to-br from-primary/10 to-secondary/10" aria-hidden="true"></div>
+          </div>
+
+          <div class="bg-surface-container-low rounded-xl border border-outline-variant/10 overflow-hidden neon-border">
+            <div class="p-6">
+              <div class="flex items-center justify-between mb-4">
+                <div class="text-white">
+                  <span class="material-symbols-outlined text-primary" aria-hidden="true">videocam</span>
+                </div>
+                <span class="text-[10px] uppercase tracking-[0.2em] font-bold text-on-surface-variant">Twitch Trackers</span>
+              </div>
+              <p class="text-on-surface-variant text-sm">
+                Go-live alerts with thumbnails and category detection.
+              </p>
+            </div>
+            <div class="h-40 bg-gradient-to-br from-secondary/10 to-primary/10" aria-hidden="true"></div>
+          </div>
+
+          <div class="bg-gradient-to-br from-primary/20 to-secondary/20 rounded-xl border border-primary/20 overflow-hidden">
+            <div class="p-6">
+              <div class="flex items-center justify-between mb-4">
+                <div class="text-white">
+                  <span class="material-symbols-outlined text-white" aria-hidden="true">smart_toy</span>
+                </div>
+                <span class="text-[10px] uppercase tracking-[0.2em] font-bold text-white/80">AI Summaries</span>
+              </div>
+              <p class="text-white/70 text-sm">
+                Optional TL;DR for vtuber news so you can scan and decide fast.
+              </p>
+            </div>
+            <div class="h-40 bg-black/30" aria-hidden="true"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Pricing -->
+      <section id="pricing" class="py-32 px-6 bg-surface-container-low/30" aria-label="Pricing">
+        <div class="max-w-7xl mx-auto">
+          <div class="text-center mb-16 space-y-4">
+            <h2 class="font-headline text-4xl md:text-5xl font-bold text-white">Pricing that scales with your community</h2>
+            <p class="text-on-surface-variant max-w-2xl mx-auto">
+              Start free. Upgrade when you want more automation, more insights, and better alert coverage.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+            <div class="bg-surface-container-low rounded-2xl border border-outline-variant/10 p-8">
+              <div class="flex items-start justify-between gap-6 mb-6">
+                <div>
+                  <h3 class="font-headline text-2xl font-bold text-white">Free</h3>
+                  <p class="text-on-surface-variant text-sm mt-2">For small servers getting started</p>
+                </div>
+                <div class="text-white text-4xl font-headline font-bold">$0</div>
+              </div>
+
+              <ul class="space-y-3 text-on-surface-variant text-sm">
+                <li class="flex gap-3">
+                  <span class="material-symbols-outlined text-primary" aria-hidden="true">check_circle</span>
+                  Twitch live alerts (core)
+                </li>
+                <li class="flex gap-3">
+                  <span class="material-symbols-outlined text-primary" aria-hidden="true">check_circle</span>
+                  Twitter/X updates
+                </li>
+                <li class="flex gap-3">
+                  <span class="material-symbols-outlined text-primary" aria-hidden="true">check_circle</span>
+                  VTuber news digest
+                </li>
+              </ul>
+
+              <div class="mt-8">
+                <a
+                  class="inline-flex items-center justify-center w-full px-6 py-4 rounded-xl font-headline font-bold text-lg text-on-surface-variant hover:text-white border border-outline-variant/10 hover:bg-surface-bright transition-all"
+                  href="https://github.com/Qrytics/streamerStalker#getting-started"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  Start Free
+                </a>
+              </div>
+            </div>
+
+            <div class="bg-[#131313] rounded-2xl border border-primary/30 p-8 shadow-[0_0_35px_rgba(193,156,255,0.08)]">
+              <div class="flex items-start justify-between gap-6 mb-6">
+                <div>
+                  <h3 class="font-headline text-2xl font-bold text-white">Pro</h3>
+                  <p class="text-on-surface-variant text-sm mt-2">For serious communities that want signal</p>
+                </div>
+                <div class="text-white text-4xl font-headline font-bold">$19</div>
+              </div>
+
+              <ul class="space-y-3 text-on-surface-variant text-sm">
+                <li class="flex gap-3">
+                  <span class="material-symbols-outlined text-primary" aria-hidden="true">check_circle</span>
+                  AI summaries for vtuber news
+                </li>
+                <li class="flex gap-3">
+                  <span class="material-symbols-outlined text-primary" aria-hidden="true">check_circle</span>
+                  Enhanced tracker operations + de-duplication
+                </li>
+                <li class="flex gap-3">
+                  <span class="material-symbols-outlined text-primary" aria-hidden="true">check_circle</span>
+                  Priority integration roadmap
+                </li>
+              </ul>
+
+              <div class="mt-8">
+                <a
+                  class="inline-flex items-center justify-center w-full px-6 py-4 rounded-xl font-headline font-bold text-lg text-on-primary-fixed bg-gradient-to-r from-primary to-primary-dim hover:brightness-110 transition-all shadow-[0_0_25px_rgba(193,156,255,0.12)]"
+                  href="https://github.com/Qrytics/streamerStalker#getting-started"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  Upgrade to Pro
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA Section -->
+      <section class="py-32 px-6">
+        <div class="max-w-5xl mx-auto rounded-3xl bg-[#131313] p-12 md:p-20 text-center relative overflow-hidden border border-outline-variant/10">
+          <div aria-hidden="true" class="absolute top-0 right-0 w-96 h-96 bg-primary/10 blur-[100px] -z-10"></div>
+          <div aria-hidden="true" class="absolute bottom-0 left-0 w-64 h-64 bg-secondary/10 blur-[80px] -z-10"></div>
+
+          <h2 class="font-headline text-4xl md:text-6xl font-black text-white mb-8">
+            Ready to evolve your <span class="gradient-text">community?</span>
+          </h2>
+          <p class="text-on-surface-variant text-lg mb-12 max-w-2xl mx-auto">
+            Join 2,500+ Discord servers already utilizing streamerStalker intelligence.
+          </p>
+
+          <a
+            class="inline-flex items-center justify-center bg-primary text-on-primary px-10 py-5 rounded-xl font-headline font-bold text-xl hover:bg-primary-container transition-all shadow-xl shadow-primary/20"
+            href="https://github.com/Qrytics/streamerStalker#getting-started"
+            target="_blank"
+            rel="noopener"
+          >
+            Deploy to Server Now
+          </a>
+        </div>
+      </section>
+
+      <!-- FAQ -->
+      <section class="py-24 px-6 max-w-7xl mx-auto" aria-label="Frequently asked questions">
+        <div class="text-center mb-14">
+          <h2 class="font-headline text-4xl font-bold text-white">FAQ</h2>
+          <p class="text-on-surface-variant max-w-2xl mx-auto mt-4">
+            Quick answers before you invite the bot.
           </p>
         </div>
 
-        <div class="feature-card">
-          <div class="feature-icon">🤖</div>
-          <h3>AI&nbsp;Summaries</h3>
-          <p>
-            Powered by OpenAI&nbsp;GPT-3.5-turbo, the optional AI summary
-            condenses up to five news items into 2–3 readable sentences.
-            Privacy-safe — only titles are sent to the LLM.
-          </p>
-        </div>
+        <div class="max-w-3xl mx-auto space-y-4">
+          <details class="bg-surface-container-low rounded-xl border border-outline-variant/10 p-6 group">
+            <summary class="cursor-pointer font-headline font-bold text-white">What platforms does streamerStalker support?</summary>
+            <p class="text-on-surface-variant text-sm mt-3">
+              Twitch live status, Twitter/X updates (via RSS), and VTuber news digests from curated sources.
+            </p>
+          </details>
 
-        <div class="feature-card">
-          <div class="feature-icon">🛡️</div>
-          <h3>Per-Guild Isolation</h3>
-          <p>
-            Every Discord server manages its own subscriptions independently.
-            Notifications are delivered to the exact channel you configure,
-            with full de-duplication.
-          </p>
-        </div>
+          <details class="bg-surface-container-low rounded-xl border border-outline-variant/10 p-6 group">
+            <summary class="cursor-pointer font-headline font-bold text-white">How does de-duplication work?</summary>
+            <p class="text-on-surface-variant text-sm mt-3">
+              The bot caches recently posted items (streams, tweets, and articles) so you only get the notification once.
+            </p>
+          </details>
 
-        <div class="feature-card">
-          <div class="feature-icon">⚡</div>
-          <h3>Zero-Friction Setup</h3>
-          <p>
-            Spin up the PostgreSQL database with a single
-            <code>docker compose up</code> command, copy
-            <code>.env.example</code>, fill in your tokens, and the bot
-            is ready.
-          </p>
-        </div>
+          <details class="bg-surface-container-low rounded-xl border border-outline-variant/10 p-6 group">
+            <summary class="cursor-pointer font-headline font-bold text-white">Is OpenAI required?</summary>
+            <p class="text-on-surface-variant text-sm mt-3">
+              No. AI summaries are optional and run only if you configure an OpenAI API key.
+            </p>
+          </details>
 
+          <details class="bg-surface-container-low rounded-xl border border-outline-variant/10 p-6 group">
+            <summary class="cursor-pointer font-headline font-bold text-white">Where do I start?</summary>
+            <p class="text-on-surface-variant text-sm mt-3">
+              Follow the setup guide on GitHub. It includes Discord, Twitch, and database configuration.
+            </p>
+          </details>
+        </div>
+      </section>
+    </main>
+
+    <footer class="w-full py-12 px-8 flex flex-col md:flex-row justify-between items-center bg-[#0e0e0e] border-t border-[#494847]/15">
+      <div class="mb-8 md:mb-0">
+        <div class="text-[#c19cff] font-['Space_Grotesk'] text-xl font-bold mb-2">streamerStalker</div>
+        <p class="font-['Inter'] text-xs uppercase tracking-widest text-[#adaaaa]">© 2024 streamerStalker Intelligence. All rights reserved.</p>
       </div>
-    </div>
-  </section>
 
-  <!-- ── Commands ──────────────────────────────────────────────────── -->
-  <section class="commands" id="commands">
-    <div class="container">
-      <h2 class="section-title">Bot Commands</h2>
-      <div class="command-table-wrapper">
-        <table class="command-table">
-          <thead>
-            <tr>
-              <th>Command</th>
-              <th>Description</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><code>/track twitch &lt;username&gt;</code></td>
-              <td>Start tracking a Twitch streamer in this channel.</td>
-            </tr>
-            <tr>
-              <td><code>/track twitter &lt;username&gt;</code></td>
-              <td>Start tracking a Twitter&nbsp;/&nbsp;X account in this channel.</td>
-            </tr>
-            <tr>
-              <td><code>/track vtuber &lt;name&gt;</code></td>
-              <td>Subscribe to vtuber news for the given name.</td>
-            </tr>
-            <tr>
-              <td><code>/untrack twitch &lt;username&gt;</code></td>
-              <td>Stop tracking a Twitch streamer.</td>
-            </tr>
-            <tr>
-              <td><code>/untrack twitter &lt;username&gt;</code></td>
-              <td>Stop tracking a Twitter&nbsp;/&nbsp;X account.</td>
-            </tr>
-            <tr>
-              <td><code>/untrack vtuber &lt;name&gt;</code></td>
-              <td>Unsubscribe from vtuber news for the given name.</td>
-            </tr>
-            <tr>
-              <td><code>/list</code></td>
-              <td>Show all items tracked in this server.</td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="flex gap-8">
+        <a class="font-['Inter'] text-xs uppercase tracking-widest text-[#adaaaa] hover:text-[#c19cff] transition-all opacity-80 hover:opacity-100" href="https://github.com/Qrytics/streamerStalker/blob/main/LICENSE" target="_blank" rel="noopener">
+          Terms
+        </a>
+        <a class="font-['Inter'] text-xs uppercase tracking-widest text-[#adaaaa] hover:text-[#c19cff] transition-all opacity-80 hover:opacity-100" href="https://github.com/Qrytics/streamerStalker" target="_blank" rel="noopener">
+          Privacy
+        </a>
+        <a class="font-['Inter'] text-xs uppercase tracking-widest text-[#adaaaa] hover:text-[#c19cff] transition-all opacity-80 hover:opacity-100" href="https://github.com/Qrytics/streamerStalker" target="_blank" rel="noopener">
+          Status
+        </a>
+        <a class="font-['Inter'] text-xs uppercase tracking-widest text-[#adaaaa] hover:text-[#c19cff] transition-all opacity-80 hover:opacity-100" href="https://github.com/Qrytics/streamerStalker/issues" target="_blank" rel="noopener">
+          Support
+        </a>
       </div>
-    </div>
-  </section>
-
-  <!-- ── How it works ──────────────────────────────────────────────── -->
-  <section class="how-it-works" id="how-it-works">
-    <div class="container">
-      <h2 class="section-title">How It Works</h2>
-      <ol class="steps">
-        <li>
-          <span class="step-num">1</span>
-          <div>
-            <strong>Track</strong> — A server member runs a slash command such as
-            <code>/track twitch xqc</code>. The bot stores the guild&nbsp;ID,
-            channel&nbsp;ID, and target username in PostgreSQL.
-          </div>
-        </li>
-        <li>
-          <span class="step-num">2</span>
-          <div>
-            <strong>Poll</strong> — Three independent <code>node-cron</code> jobs
-            poll Twitch (every&nbsp;60&nbsp;s), Nitter RSS (every&nbsp;3&nbsp;min),
-            and Reddit RSS (every&nbsp;30&nbsp;min) in the background.
-          </div>
-        </li>
-        <li>
-          <span class="step-num">3</span>
-          <div>
-            <strong>De-duplicate</strong> — Each new event is checked against a
-            database cache so the same stream, tweet, or article is never posted
-            more than once.
-          </div>
-        </li>
-        <li>
-          <span class="step-num">4</span>
-          <div>
-            <strong>Notify</strong> — The bot builds a rich Discord embed and
-            sends it to the registered channel using <code>channel.send()</code>.
-          </div>
-        </li>
-      </ol>
-    </div>
-  </section>
-
-  <!-- ── Tech Stack ─────────────────────────────────────────────────── -->
-  <section class="tech-stack" id="tech">
-    <div class="container">
-      <h2 class="section-title">Tech Stack</h2>
-      <div class="tech-grid">
-        <div class="tech-pill">discord.js v14</div>
-        <div class="tech-pill">TypeScript 5</div>
-        <div class="tech-pill">Node.js 20</div>
-        <div class="tech-pill">PostgreSQL 15</div>
-        <div class="tech-pill">node-cron</div>
-        <div class="tech-pill">axios</div>
-        <div class="tech-pill">Twitch Helix API</div>
-        <div class="tech-pill">Nitter RSS</div>
-        <div class="tech-pill">Reddit RSS</div>
-        <div class="tech-pill">OpenAI GPT-3.5</div>
-        <div class="tech-pill">Docker Compose</div>
-        <div class="tech-pill">GitHub Actions</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── Footer ─────────────────────────────────────────────────────── -->
-  <footer class="footer">
-    <div class="container">
-      <p>
-        &copy; 2024 Qrytics &mdash;
-        <a href="https://github.com/Qrytics/streamerStalker/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a>
-        &mdash;
-        <a href="https://github.com/Qrytics/streamerStalker" target="_blank" rel="noopener">GitHub</a>
-      </p>
-    </div>
-  </footer>
-
-</body>
+    </footer>
+  </body>
 </html>
+
