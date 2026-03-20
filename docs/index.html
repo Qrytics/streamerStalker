@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>streamerStalker — Never Miss a Stream Again</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ── Hero ──────────────────────────────────────────────────────── -->
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="hero-badge">Discord Bot</div>
+      <h1>streamer<span class="accent">Stalker</span></h1>
+      <p class="hero-tagline">All your favourite streamers, one ping away.</p>
+      <p class="hero-sub">
+        Track Twitch streams, Twitter&nbsp;/&nbsp;X posts, and vtuber news —
+        all from inside your Discord server.
+      </p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="https://github.com/Qrytics/streamerStalker" target="_blank" rel="noopener">
+          View on GitHub
+        </a>
+        <a class="btn btn-secondary" href="https://github.com/Qrytics/streamerStalker#getting-started" target="_blank" rel="noopener">
+          Get Started
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── Features ──────────────────────────────────────────────────── -->
+  <section class="features" id="features">
+    <div class="container">
+      <h2 class="section-title">Features</h2>
+      <div class="feature-grid">
+
+        <div class="feature-card">
+          <div class="feature-icon">🔴</div>
+          <h3>Twitch Live Alerts</h3>
+          <p>
+            Polls the Twitch Helix API every&nbsp;60&nbsp;seconds and sends a
+            rich embed the moment a streamer goes live — with title, game,
+            viewer count, and stream thumbnail.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🐦</div>
+          <h3>Twitter&nbsp;/&nbsp;X Updates</h3>
+          <p>
+            Fetches new tweets via Nitter RSS every&nbsp;3&nbsp;minutes —
+            no official Twitter API key required. Falls back through multiple
+            Nitter instances automatically.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">📰</div>
+          <h3>Vtuber News Digest</h3>
+          <p>
+            Aggregates posts from r/VirtualYoutubers and r/Hololive every
+            30&nbsp;minutes, filters by the vtubers you care about, and
+            optionally generates an AI&nbsp;summary.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🤖</div>
+          <h3>AI&nbsp;Summaries</h3>
+          <p>
+            Powered by OpenAI&nbsp;GPT-3.5-turbo, the optional AI summary
+            condenses up to five news items into 2–3 readable sentences.
+            Privacy-safe — only titles are sent to the LLM.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🛡️</div>
+          <h3>Per-Guild Isolation</h3>
+          <p>
+            Every Discord server manages its own subscriptions independently.
+            Notifications are delivered to the exact channel you configure,
+            with full de-duplication.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <h3>Zero-Friction Setup</h3>
+          <p>
+            Spin up the PostgreSQL database with a single
+            <code>docker compose up</code> command, copy
+            <code>.env.example</code>, fill in your tokens, and the bot
+            is ready.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Commands ──────────────────────────────────────────────────── -->
+  <section class="commands" id="commands">
+    <div class="container">
+      <h2 class="section-title">Bot Commands</h2>
+      <div class="command-table-wrapper">
+        <table class="command-table">
+          <thead>
+            <tr>
+              <th>Command</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>/track twitch &lt;username&gt;</code></td>
+              <td>Start tracking a Twitch streamer in this channel.</td>
+            </tr>
+            <tr>
+              <td><code>/track twitter &lt;username&gt;</code></td>
+              <td>Start tracking a Twitter&nbsp;/&nbsp;X account in this channel.</td>
+            </tr>
+            <tr>
+              <td><code>/track vtuber &lt;name&gt;</code></td>
+              <td>Subscribe to vtuber news for the given name.</td>
+            </tr>
+            <tr>
+              <td><code>/untrack twitch &lt;username&gt;</code></td>
+              <td>Stop tracking a Twitch streamer.</td>
+            </tr>
+            <tr>
+              <td><code>/untrack twitter &lt;username&gt;</code></td>
+              <td>Stop tracking a Twitter&nbsp;/&nbsp;X account.</td>
+            </tr>
+            <tr>
+              <td><code>/untrack vtuber &lt;name&gt;</code></td>
+              <td>Unsubscribe from vtuber news for the given name.</td>
+            </tr>
+            <tr>
+              <td><code>/list</code></td>
+              <td>Show all items tracked in this server.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── How it works ──────────────────────────────────────────────── -->
+  <section class="how-it-works" id="how-it-works">
+    <div class="container">
+      <h2 class="section-title">How It Works</h2>
+      <ol class="steps">
+        <li>
+          <span class="step-num">1</span>
+          <div>
+            <strong>Track</strong> — A server member runs a slash command such as
+            <code>/track twitch xqc</code>. The bot stores the guild&nbsp;ID,
+            channel&nbsp;ID, and target username in PostgreSQL.
+          </div>
+        </li>
+        <li>
+          <span class="step-num">2</span>
+          <div>
+            <strong>Poll</strong> — Three independent <code>node-cron</code> jobs
+            poll Twitch (every&nbsp;60&nbsp;s), Nitter RSS (every&nbsp;3&nbsp;min),
+            and Reddit RSS (every&nbsp;30&nbsp;min) in the background.
+          </div>
+        </li>
+        <li>
+          <span class="step-num">3</span>
+          <div>
+            <strong>De-duplicate</strong> — Each new event is checked against a
+            database cache so the same stream, tweet, or article is never posted
+            more than once.
+          </div>
+        </li>
+        <li>
+          <span class="step-num">4</span>
+          <div>
+            <strong>Notify</strong> — The bot builds a rich Discord embed and
+            sends it to the registered channel using <code>channel.send()</code>.
+          </div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ── Tech Stack ─────────────────────────────────────────────────── -->
+  <section class="tech-stack" id="tech">
+    <div class="container">
+      <h2 class="section-title">Tech Stack</h2>
+      <div class="tech-grid">
+        <div class="tech-pill">discord.js v14</div>
+        <div class="tech-pill">TypeScript 5</div>
+        <div class="tech-pill">Node.js 20</div>
+        <div class="tech-pill">PostgreSQL 15</div>
+        <div class="tech-pill">node-cron</div>
+        <div class="tech-pill">axios</div>
+        <div class="tech-pill">Twitch Helix API</div>
+        <div class="tech-pill">Nitter RSS</div>
+        <div class="tech-pill">Reddit RSS</div>
+        <div class="tech-pill">OpenAI GPT-3.5</div>
+        <div class="tech-pill">Docker Compose</div>
+        <div class="tech-pill">GitHub Actions</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Footer ─────────────────────────────────────────────────────── -->
+  <footer class="footer">
+    <div class="container">
+      <p>
+        &copy; 2024 Qrytics &mdash;
+        <a href="https://github.com/Qrytics/streamerStalker/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a>
+        &mdash;
+        <a href="https://github.com/Qrytics/streamerStalker" target="_blank" rel="noopener">GitHub</a>
+      </p>
+    </div>
+  </footer>
+
+</body>
+</html>

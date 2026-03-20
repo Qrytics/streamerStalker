@@ -1,10 +1,22 @@
 import axios from 'axios';
 
+/**
+ * Cached OAuth2 access token for the Twitch Helix API.
+ * Re-fetched automatically when expired.
+ */
 let accessToken: string | null = null;
+/** Unix timestamp (ms) at which the current token expires (with a safety buffer). */
 let tokenExpiry: number = 0;
 
+/** Refresh the token this many milliseconds before it formally expires. */
 const TOKEN_REFRESH_BUFFER_MS = 60_000;
 
+/**
+ * Returns a valid Twitch OAuth2 access token, fetching a new one via the
+ * client-credentials flow when the cached token is absent or about to expire.
+ *
+ * @returns A valid Bearer token string.
+ */
 async function getAccessToken(): Promise<string> {
   if (accessToken && Date.now() < tokenExpiry) {
     return accessToken;
@@ -23,6 +35,7 @@ async function getAccessToken(): Promise<string> {
   return accessToken!;
 }
 
+/** Shape of stream metadata returned for a single Twitch channel. */
 export interface StreamInfo {
   username: string;
   title: string;
@@ -33,6 +46,16 @@ export interface StreamInfo {
   isLive: boolean;
 }
 
+/**
+ * Queries the Twitch Helix `/streams` endpoint for all given usernames in a
+ * single batched request and returns a Map keyed by lowercase username.
+ *
+ * Streamers not currently live receive an entry with `isLive: false` so
+ * callers can detect the offline → live transition without a separate lookup.
+ *
+ * @param usernames - Lowercase Twitch login names to check.
+ * @returns A Map from lowercase username to {@link StreamInfo}.
+ */
 export async function getStreamStatus(usernames: string[]): Promise<Map<string, StreamInfo>> {
   if (usernames.length === 0) return new Map();
 
