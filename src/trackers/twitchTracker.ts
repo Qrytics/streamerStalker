@@ -2,6 +2,18 @@ import { Client, EmbedBuilder, TextChannel } from 'discord.js';
 import { Pool } from 'pg';
 import { getStreamStatus } from '../services/twitch';
 
+/**
+ * Polls the Twitch Helix API for all tracked streamers and sends a Discord
+ * embed notification to the appropriate channel whenever a streamer
+ * transitions from **offline → live**.
+ *
+ * Already-live streamers (repeated polling) do not trigger a duplicate
+ * notification; the `last_live_status` column in `tracked_streamers` tracks
+ * the previous known state.
+ *
+ * @param client - Authenticated discord.js `Client` instance used to fetch channels.
+ * @param db     - PostgreSQL connection pool for tracking state reads/writes.
+ */
 export async function checkTwitchStreams(client: Client, db: Pool): Promise<void> {
   try {
     // Get all tracked Twitch streamers

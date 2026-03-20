@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { decodeHtmlEntities } from '../utils/html';
 
+/** A single parsed tweet from a Nitter RSS feed. */
 export interface Tweet {
   id: string;
   text: string;
@@ -15,6 +16,17 @@ const NITTER_INSTANCES = [
   'https://nitter.privacydev.net',
 ];
 
+/**
+ * Fetches the most recent tweets for a Twitter/X username by polling public
+ * Nitter RSS feeds (no official API key required).
+ *
+ * Attempts each instance in {@link NITTER_INSTANCES} in order and returns the
+ * first successful response.  Returns an empty array if all instances fail.
+ *
+ * @param username - Twitter/X screen name (without the leading `@`).
+ * @param count    - Maximum number of tweets to return (default: 5).
+ * @returns An array of up to `count` tweets, newest first.
+ */
 export async function getLatestTweets(username: string, count: number = 5): Promise<Tweet[]> {
   for (const instance of NITTER_INSTANCES) {
     try {
