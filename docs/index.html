@@ -173,7 +173,7 @@
 
       <div class="hidden md:flex items-center gap-8 font-['Inter'] text-sm font-medium">
         <a
-          class="text-[#c19cff] border-b-2 border-[#c19cff] pb-1 hover:text-white transition-colors duration-200"
+          class="text-[#adaaaa] hover:text-white transition-colors duration-200"
           href="#features"
         >
           Features
@@ -246,17 +246,62 @@
 
         <!-- Dashboard Preview Overlap -->
         <div class="mt-20 w-full max-w-6xl mx-auto rounded-t-2xl border-x border-t border-outline-variant/15 bg-surface-container-low p-4 shadow-2xl">
-          <figure>
-            <img
-              alt="Preview of the streamerStalker dashboard interface"
-              class="w-full rounded-t-xl opacity-80 grayscale-[0.2] hover:grayscale-0 transition-all duration-700"
-              data-alt="Futuristic dark mode dashboard interface with purple neon accents"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuDY7kqQrCaUoyOQIAcVro9xp_qMam6ZJyQFkO-5qZ2_xtxfBRo63_JxZWLy2L9ddlOjrj8RmdivH51dajeUKgGzsY99ul5jWXjSBVS0DLvtHjqjAT8zl0anOgBFvvw6SRMfzP7KkCEmdPfkRiWcGHGJAPvH5SKPYq60r9dgEgqkvGIuDpQ1Rn-fooiXICZW7u-vjb9t-KYSvY2-wAKcEoXQ_QjtoTGCGh_1XSoEGk2qTRjoxGwfCd5VhBCVFRxz0HH281yROLEt2y01"
-              loading="lazy"
-              decoding="async"
-              width="1400"
-              height="720"
-            />
+          <figure aria-label="Mock streamerStalker dashboard preview">
+            <div class="w-full rounded-t-xl bg-[#0e0e0e] border border-outline-variant/10 overflow-hidden select-none" style="min-height:320px">
+              <!-- Fake sidebar + content layout -->
+              <div class="flex h-full" style="min-height:320px">
+                <!-- Sidebar -->
+                <div class="w-48 bg-surface-container-low border-r border-outline-variant/10 p-4 flex flex-col gap-3 flex-shrink-0">
+                  <div class="text-[10px] uppercase tracking-widest text-on-surface-variant/50 mb-1">Trackers</div>
+                  <div class="flex items-center gap-2 px-2 py-1.5 rounded bg-primary/10 border-l-2 border-primary text-primary text-xs font-medium">
+                    <span class="material-symbols-outlined text-[14px]">radio</span>Twitch
+                  </div>
+                  <div class="flex items-center gap-2 px-2 py-1.5 rounded text-on-surface-variant/60 text-xs">
+                    <span class="material-symbols-outlined text-[14px]">campaign</span>Twitter/X
+                  </div>
+                  <div class="flex items-center gap-2 px-2 py-1.5 rounded text-on-surface-variant/60 text-xs">
+                    <span class="material-symbols-outlined text-[14px]">newspaper</span>VTuber
+                  </div>
+                  <div class="flex items-center gap-2 px-2 py-1.5 rounded text-on-surface-variant/60 text-xs">
+                    <span class="material-symbols-outlined text-[14px]">smart_toy</span>AI Summary
+                  </div>
+                </div>
+                <!-- Main content -->
+                <div class="flex-1 p-5 flex flex-col gap-3 overflow-hidden">
+                  <div class="flex items-center justify-between mb-1">
+                    <div class="text-white font-bold text-sm font-['Space_Grotesk']">Live Feed</div>
+                    <div class="flex items-center gap-1.5 text-[10px] text-green-400/80">
+                      <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span>3 active
+                    </div>
+                  </div>
+                  <!-- Notification cards -->
+                  <div class="flex items-center gap-3 bg-surface-container rounded-lg p-3 border-l-4 border-primary">
+                    <div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 text-primary text-[10px] font-bold">SH</div>
+                    <div>
+                      <div class="text-white text-xs font-semibold">shroud is now live!</div>
+                      <div class="text-on-surface-variant/70 text-[10px]">Valorant · 42,100 viewers</div>
+                    </div>
+                    <div class="ml-auto text-[10px] text-on-surface-variant/40">just now</div>
+                  </div>
+                  <div class="flex items-center gap-3 bg-surface-container rounded-lg p-3 border-l-4 border-secondary/60">
+                    <div class="w-8 h-8 rounded-full bg-secondary/20 flex items-center justify-center flex-shrink-0 text-secondary text-[10px] font-bold">PK</div>
+                    <div>
+                      <div class="text-white text-xs font-semibold">pokimane is now live!</div>
+                      <div class="text-on-surface-variant/70 text-[10px]">Just Chatting · 18,400 viewers</div>
+                    </div>
+                    <div class="ml-auto text-[10px] text-on-surface-variant/40">2m ago</div>
+                  </div>
+                  <div class="flex items-center gap-3 bg-surface-container rounded-lg p-3 border-l-4 border-tertiary/40">
+                    <div class="w-8 h-8 rounded-full bg-tertiary/10 flex items-center justify-center flex-shrink-0 text-tertiary text-[10px] font-bold">HL</div>
+                    <div>
+                      <div class="text-white text-xs font-semibold">Hololive tweet · @hololive_En</div>
+                      <div class="text-on-surface-variant/70 text-[10px]">New collab announcement!</div>
+                    </div>
+                    <div class="ml-auto text-[10px] text-on-surface-variant/40">5m ago</div>
+                  </div>
+                </div>
+              </div>
+            </div>
             <figcaption class="sr-only">
               Visual preview of how alerts and trackers can look in a dashboard UI.
             </figcaption>
@@ -287,16 +332,21 @@
                 Real-time go-live notifications with custom embeds, viewer count tracking, and stream category detection.
               </p>
             </div>
-            <div class="mt-8 overflow-hidden rounded-lg">
-              <img
-                alt="Neon-themed illustration representing Twitch trackers"
-                class="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-500"
-                loading="lazy"
-                decoding="async"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBEONHAKwb66ehZADu1Yhxj5FTmckGw9c1a49j_DY7HCR9osEU7hkhiRW6EMRCMTXt3kRWpCXT5-ItLwTTZrufKNlzGj4BLPjIGqw_6rozoGK97j_UirAdsYlhmq0_w49lS4s3DhB0_CvvcOz_TDEpxEwgcnWic7f2Fb0yo7aXRp3P0hdpTcW-0fdQq2Fdj9d2Yjeisnp8NrfTtM4CfMRz4RfeDBrbAYJXKfS3MIszyOCeBIaD02k1S9Ck40jR5w7tTtric61A1bvJ2"
-                width="1200"
-                height="400"
-              />
+            <div class="mt-8 overflow-hidden rounded-lg h-40 bg-gradient-to-br from-primary/10 to-secondary/10 flex flex-col gap-2 p-3" aria-hidden="true">
+              <div class="flex items-center gap-2 bg-surface-container rounded p-2 border-l-4 border-primary">
+                <span class="w-2 h-2 rounded-full bg-error animate-pulse flex-shrink-0"></span>
+                <div>
+                  <div class="font-bold text-white text-[11px]">shroud is now live!</div>
+                  <div class="text-on-surface-variant/70 text-[10px]">Valorant · 42,100 viewers</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 bg-surface-container rounded p-2 border-l-4 border-primary/50">
+                <span class="w-2 h-2 rounded-full bg-error/50 flex-shrink-0"></span>
+                <div>
+                  <div class="font-bold text-white text-[11px]">pokimane is now live!</div>
+                  <div class="text-on-surface-variant/70 text-[10px]">Just Chatting · 18,400 viewers</div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -413,7 +463,24 @@
                 Status, counts, and the systems that are currently running.
               </p>
             </div>
-            <div class="h-40 bg-gradient-to-br from-primary/10 to-secondary/10" aria-hidden="true"></div>
+            <div class="h-40 bg-gradient-to-br from-primary/10 to-secondary/10 flex flex-col gap-1.5 p-3 text-xs" aria-hidden="true">
+              <div class="flex items-center justify-between text-on-surface-variant/70 border-b border-outline-variant/20 pb-1.5 mb-0.5">
+                <span class="text-primary/90 font-semibold">System Status</span>
+                <span class="text-green-400/80 text-[10px]">● all online</span>
+              </div>
+              <div class="flex items-center justify-between text-on-surface-variant/70">
+                <span>Twitch tracker</span><span class="text-green-400/80">active</span>
+              </div>
+              <div class="flex items-center justify-between text-on-surface-variant/70">
+                <span>Twitter/X feed</span><span class="text-green-400/80">active</span>
+              </div>
+              <div class="flex items-center justify-between text-on-surface-variant/70">
+                <span>Alerts today</span><span class="text-primary">24</span>
+              </div>
+              <div class="flex items-center justify-between text-on-surface-variant/70">
+                <span>Trackers active</span><span class="text-primary">3</span>
+              </div>
+            </div>
           </div>
 
           <div class="bg-surface-container-low rounded-xl border border-outline-variant/10 overflow-hidden neon-border">
@@ -428,7 +495,22 @@
                 Go-live alerts with thumbnails and category detection.
               </p>
             </div>
-            <div class="h-40 bg-gradient-to-br from-secondary/10 to-primary/10" aria-hidden="true"></div>
+            <div class="h-40 bg-gradient-to-br from-secondary/10 to-primary/10 flex flex-col gap-2 p-3 text-xs" aria-hidden="true">
+              <div class="flex items-center gap-2 bg-surface-container rounded p-2 border-l-4 border-primary">
+                <span class="w-2 h-2 rounded-full bg-error animate-pulse flex-shrink-0"></span>
+                <div>
+                  <div class="font-bold text-white text-[11px]">shroud is now live!</div>
+                  <div class="text-on-surface-variant/70 text-[10px]">Valorant · 42,100 viewers</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 bg-surface-container rounded p-2 border-l-4 border-primary/50">
+                <span class="w-2 h-2 rounded-full bg-error/50 flex-shrink-0"></span>
+                <div>
+                  <div class="font-bold text-white text-[11px]">pokimane is now live!</div>
+                  <div class="text-on-surface-variant/70 text-[10px]">Just Chatting · 18,400 viewers</div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div class="bg-gradient-to-br from-primary/20 to-secondary/20 rounded-xl border border-primary/20 overflow-hidden">
@@ -443,7 +525,14 @@
                 Optional TL;DR for vtuber news so you can scan and decide fast.
               </p>
             </div>
-            <div class="h-40 bg-black/30" aria-hidden="true"></div>
+            <div class="h-40 bg-black/30 flex flex-col gap-2 p-3 text-xs" aria-hidden="true">
+              <div class="text-white/50 uppercase tracking-widest text-[9px] mb-0.5">TL;DR</div>
+              <div class="text-white/70 leading-relaxed">Stream covered new Elden Ring DLC. Highlights: first boss clear, full lore deep-dive, and viewer Q&amp;A at hour 3.</div>
+              <div class="mt-auto flex items-center gap-1 text-white/30 text-[10px]">
+                <span class="material-symbols-outlined text-[12px]" aria-hidden="true">smart_toy</span>
+                AI-generated summary
+              </div>
+            </div>
           </div>
         </div>
       </section>
